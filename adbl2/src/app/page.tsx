@@ -48,8 +48,6 @@ export default function Home() {
   `;
 
   const fileChanged = (event) => {
-    console.log()
-    console.log(event.target.files[0])
     const reader = new FileReader()
 
     setFile(event.target.files[0])
@@ -57,7 +55,6 @@ export default function Home() {
 
     reader.onload = async (event) => { 
       const text = (event.target.result)
-      // console.log(text)
       // alert(text)
       setGraph(kialoParser(text as string))
     };
@@ -69,8 +66,17 @@ export default function Home() {
     setFile(null)
   }
 
-  console.log("graph", graph)
-  console.log("file", file)
+
+  const cytoscapeData = []
+  if (!!graph) {
+    graph.all().forEach(node => {
+      cytoscapeData.push({data : {...node.model, label:node.model.id}})
+      node.children.forEach(child => {
+        cytoscapeData.push({ data : {source : child.model.id, target: node.model.id, label: child.model.id + " --> " + node.model.id}})
+      });
+    });
+  }
+
 
   const DrawerList = (
     <Sheet
@@ -157,7 +163,7 @@ export default function Home() {
         <div className="bg-slate-200 w-11/12 flex-auto flex flex-col">
           {
             !!graph &&
-            <GraphUI></GraphUI>
+            <GraphUI data={cytoscapeData}></GraphUI>
             //<h2>{graph.model.toneInput.replace(".", " ?")}</h2>
           }
         </div>

@@ -1,69 +1,116 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { AppContext } from "./page";
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from "cytoscape";
 import elk from 'cytoscape-elk';
 import ArgumentDetailsUI from "./argDetails";
+import { ConstructionOutlined } from "@mui/icons-material";
+import { cp } from "fs";
 
 cytoscape.use(elk)
 
 
-export default function GraphUI() {
 
-  const { graph, setGraph, setSelectedNode }    = useContext(AppContext);
+
+export default function GraphUI(props) {
+
+  const { graph, setGraph }                                   = useContext(AppContext)
   const [ cy, setCy ]                                         = useState(undefined)
-  //const [ selectedNode, setSelectedNode ]                     = useState(undefined)
+  const [ selectedNode, setSelectedNode ]                     = useState(undefined)
+  const [ selectedParentNode, setSelectedParentNode ]         = useState(undefined)
+  const [ pos, setPos ]                                       = useState(undefined)
+
+  // console.log(selectedNode)
+
   // const setSelectedNode = useRef(null);
 
-  console.log("graphgraphgraphgraphgraph", graph)
 
   const cytoscapeData: any[] = []
 
+  const memoGraph = useMemo(() => <CytoscapeComponent 
+                                    elements={props.data}
+                                    style={{height: '100%', width: '100%'}} 
+                                    className="flex-auto"
+                                    cy={(cy) => setCy(cy)}
+                                    layout= { 
+                                      {
+                                        name : 'elk',
+                                        elk: {
+                                          'elk.direction': 'UP',
+                                        }
+                                      }
+                                    }
+                                  />, [props.data]);
 
-  graph.all().forEach(node => {
-    cytoscapeData.push({data : {...node.model, label:node.model.id}})
-    node.children.forEach(child => {
-      cytoscapeData.push({ data : {source : child.model.id, target: node.model.id, label: child.model.id + " --> " + node.model.id}})
-    });
-  });
 
-  console.log(cytoscapeData)
 
   if(!!cy) {
-    cy.on("mouseover", "node", (x) => {
-      x.preventDefault();
-      console.log(x.target._private.data)
-      setSelectedNode(x.target._private.data)
-      console.log(cy)
+    cy.on("mouseover", "node", (event) => {
+      event.preventDefault();
+      setPos({x:event.originalEvent.x, y:event.originalEvent.y})
+      setSelectedNode(event.target._private.data)
+
+      // cy.nodes().style("border-style", "solid")
+      // cy.nodes().style("border-width", 0)
+
+      if(event.target._private.data.id !== "1.") {
+
+        console.log("TARGET", event.target)
+        event.target.style("border-style", "solid")
+        event.target.style("border-width", 5)
+
+        const parentId = cy.edges('[source="'+event.target._private.data.id+'"]')[0]._private.data.target
+        const parentNode = cy.nodes('[id="'+parentId+'"]')[0]._private.data
+        setSelectedParentNode(parentNode)
+      } else {
+        setSelectedParentNode(undefined)
+      }
     })
+
+    cy.on("mouseout", "node",(event) => {
+      var evtTarget = event.target;
+      event.preventDefault();
+      event.target.style("border-width", 0)
+    })
+
+    cy.on("click", (event) => {
+      var evtTarget = event.target;
+      event.preventDefault();
+    
+      if( evtTarget === cy ){
+        setSelectedNode(undefined)
+      }   
+    })
+
+    cy.nodes('[stance="Con"]').style('background-color', 'Tomato');
+    cy.nodes('[stance="Root"]').style('background-color', 'DodgerBlue');
+    cy.nodes('[stance="Pro"]').style('background-color', 'LightGreen');
+
+    cy.nodes().map(x => x._private.data).forEach(node => {
+      if(node.stance !== 'Root'){
+        if(node.stance === "Con") {
+          cy.edges('[source="'+node.id+'"]').style('lineColor', 'Tomato');
+        }
+        if(node.stance === "Pro") {
+          cy.edges('[source="'+node.id+'"]').style('lineColor', 'LightGreen');
+        }
+      }
+    });
+
+    // console.log("EDGES", cy.edged().map(x => x._private.data))
   }
+
+
   
   return (
     <>
       <h2>Titre</h2>
-      <CytoscapeComponent 
-        elements={cytoscapeData as cytoscape.ElementDefinition[]}
-        style={{height: '100%', width: '100%'}} 
-        className="flex-auto"
-        cy={(cy) => setCy(cy)}
-        layout= { 
-          {
-            name : 'elk',
-            elk: {
-              'elk.direction': 'UP',
-            }
-          }
-        }
-      />
-      {/* {!!selectedNode &&
-        <div>
-          {selectedNode.toneInput}
-        </div>
-      } */}
-      {/* {
+      { memoGraph }
+      {
         !!selectedNode &&
-        <ArgumentDetailsUI arg={selectedNode} />
-      } */}
+        <ArgumentDetailsUI bottomArg={selectedNode} topArg={selectedParentNode} posX={pos.x} posY={pos.y} close={setSelectedNode} key={selectedNode}/>
+      }
+      
     </>    
   )
 }
