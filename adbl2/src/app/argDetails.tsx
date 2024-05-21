@@ -1,13 +1,14 @@
 import Close from "@mui/icons-material/Close"
-import { Box, Button, CircularProgress, Grid, IconButton, LinearProgress, Skeleton, Textarea } from "@mui/joy"
+import { Box, Button, CircularProgress, Grid, IconButton, LinearProgress, Skeleton, Snackbar, Textarea, Typography } from "@mui/joy"
 import Grid2 from "@mui/material/Unstable_Grid2"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import NorthIcon from '@mui/icons-material/North';
 import { Bar } from "react-chartjs-2";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import {
   Chart as ChartJS,
@@ -19,6 +20,8 @@ import {
   Legend,
 } from 'chart.js';
 import AddChild from "./addChildArgumentModal";
+import { AppContext } from "./page";
+import { inferRelation } from "../utils/inference";
 
 ChartJS.register(
   CategoryScale,
@@ -29,24 +32,16 @@ ChartJS.register(
   Legend
 );
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export default function ArgumentDetailsUI(props) {
 
-
-
   const [ isVisible, setVisible ] = useState(true)
+  const [ isAddSuccess, setIsAddSuccess ] = useState(false)
   const [ isInfering, setIsInfering ] = useState(true)
   const [ arg, setArg ] = useState(props.bottomArg.toneInput)
 
-
-  // console.log("topArg", props.topArg)
-  // console.log("bottomArg", props.bottomArg)
-
   useEffect(() => {
     setArg(props.bottomArg.toneInput)
+    setIsAddSuccess(false)
   }, [props.bottomArg.toneInput])
 
   useEffect(() => {
@@ -56,8 +51,7 @@ export default function ArgumentDetailsUI(props) {
 
     setIsInfering(true)
     if(!!props.topArg){
-      console.log("INFERING")
-      sleep(3000).then(() => { setIsInfering(false); console.log("END INFERENCE") })
+      inferRelation().then(() => setIsInfering(false))
     } else {
       setIsInfering(false)
     }    
@@ -67,30 +61,10 @@ export default function ArgumentDetailsUI(props) {
   const ref2 = useRef(null);
   
   const handleOutSideClick = (event) => {
-    console.log(ref1)
     if (!ref1.current?.contains(event.target)) {
-      console.log("click outside")
-      console.log(event)
       props.close(undefined)
     }
   };
-
-  // useEffect(() => {
-  //   const handleOutSideClick = (event) => {
-  //     console.log(ref1)
-  //     if (!ref1.current?.contains(event.target)) {
-  //       console.log("click outside")
-  //       console.log(event)
-  //       props.close(undefined)
-  //     }
-  //   };
-
-  //   window.addEventListener("mousedown", handleOutSideClick);
-
-  //   return () => {
-  //     window.removeEventListener("mousedown", handleOutSideClick);
-  //   };
-  // }, [ref1, ref2]);
 
   const style1 = { 
     top:props.posY,
@@ -124,19 +98,20 @@ export default function ArgumentDetailsUI(props) {
   let bottomBorderArgColor = "#d3d3d3"
   if(props.bottomArg.stance === "Pro") {
     bottomArgColor = "#a7f1a7"
-    bottomBorderArgColor = "#1cb01c"
+    bottomBorderArgColor = "#0a420a"
   } else if (props.bottomArg.stance === "Con") {
     bottomArgColor = "#ffa899"
-    bottomBorderArgColor = "#cc1f00"
+    bottomBorderArgColor = "#4d0b00"
   } else if (props.bottomArg.stance === "Root") {
     bottomArgColor = "#80bfff"
-    bottomBorderArgColor = "#0066cc"
+    bottomBorderArgColor = "#00264d"
   }
 
 
 
   const labels = ['mmhm'];
   const tmpPercent = Math.floor(Math.random() * 100)
+  
   const tmpData = {
     labels,
     datasets: [
@@ -144,13 +119,13 @@ export default function ArgumentDetailsUI(props) {
         label: 'Attack',
         data: [tmpPercent],
         borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        backgroundColor: '#ff9380',
       },
       {
         label: 'Support',
         data: [100-tmpPercent],
         borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        backgroundColor: '#bfff80',
       },
     ],
   }
@@ -181,6 +156,8 @@ export default function ArgumentDetailsUI(props) {
     },
   };
 
+  console.log("tmpData", tmpData)
+
   return (
     <Box className="absolute bg-white" style={style1} ref={ref1} border={2}>
         {/* <div className="absolute w-full flex flex-row-reverse">
@@ -205,9 +182,16 @@ export default function ArgumentDetailsUI(props) {
               <Close/>
             </IconButton>
           </div>
-          <div>
+          <Typography
+            component="h2"
+            id="modal-title"
+            level="h4"
+            textColor="inherit"
+            fontWeight="lg"
+            mb={1}
+          >
             Title
-          </div>
+          </Typography>
           <div>
             <IconButton onClick={()=>props.close(undefined)}>
               <Close/>
@@ -231,11 +215,22 @@ export default function ArgumentDetailsUI(props) {
               </>
             }
 
-            <div>
+            {!props.topArg &&
               <Box bgcolor={bottomArgColor} p={1} borderRadius={4} border={3} borderColor={bottomBorderArgColor}>
-                <Textarea size="lg" name="Size" value={arg} key={props.bottomArg.toneInput} onChange={e => setArg(e.target.value)}/>
+                <Textarea size="lg" name="Size" value={arg} key={props.bottomArg.toneInput} onChange={e => setArg(e.target.value)} className="pointer-events-none"/>
               </Box>
-            </div>
+            }
+
+            {!!props.topArg &&
+              <div>
+                <Box bgcolor={bottomArgColor} p={1} borderRadius={4} border={3} borderColor={bottomBorderArgColor}>
+                  <Textarea size="lg" name="Size" value={arg} key={props.bottomArg.toneInput} onChange={e => setArg(e.target.value)} />
+                </Box>
+              </div>
+            }
+
+
+
 
             { !!props.topArg &&
               <Box width={"100%"} className="h-32 relative justify-center">
@@ -268,18 +263,35 @@ export default function ArgumentDetailsUI(props) {
                         <RefreshIcon fontSize="large"/>
                       </Button>
                     </Grid>
-                  </Grid>
-                  
+                  </Grid> 
                 }
               </Box>
             }
-            <div>
-              <AddChild/>
-            </div>
-            <Button variant="solid" startDecorator={<SaveIcon/>} endDecorator={<Close/>} color="danger">
-              Save and Close
-            </Button>
+            <AddChild arg={props.bottomArg}/>
+            <Grid container direction="row" >
+              <Grid item xs={6} paddingRight={0.5}>
+                <Button variant="solid" startDecorator={<DeleteIcon/>} color="danger" className="w-full">
+                  Delete
+                </Button>
+              </Grid>
+              <Grid item xs={6} paddingLeft={0.5}>
+                <Button variant="solid" startDecorator={<SaveIcon/>} /*endDecorator={<Close/>}*/ color="primary" className="w-full">
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
+          <Snackbar
+            autoHideDuration={4000}
+            open={isAddSuccess}
+            onClose={(event, reason) => {
+              if (reason === 'clickaway') {
+                return;
+              }
+              setIsAddSuccess(false);
+            }}
+          >
+          </Snackbar>
         </Box>
     </Box>
 

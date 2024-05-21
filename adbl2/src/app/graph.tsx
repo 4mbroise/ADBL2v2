@@ -6,6 +6,7 @@ import elk from 'cytoscape-elk';
 import ArgumentDetailsUI from "./argDetails";
 import { ConstructionOutlined } from "@mui/icons-material";
 import { cp } from "fs";
+import { Typography } from "@mui/joy";
 
 cytoscape.use(elk)
 
@@ -19,11 +20,6 @@ export default function GraphUI(props) {
   const [ selectedNode, setSelectedNode ]                     = useState(undefined)
   const [ selectedParentNode, setSelectedParentNode ]         = useState(undefined)
   const [ pos, setPos ]                                       = useState(undefined)
-
-  // console.log(selectedNode)
-
-  // const setSelectedNode = useRef(null);
-
 
   const cytoscapeData: any[] = []
 
@@ -53,9 +49,11 @@ export default function GraphUI(props) {
       // cy.nodes().style("border-style", "solid")
       // cy.nodes().style("border-width", 0)
 
+      event.target.style("border-style", "solid")
+      event.target.style("border-width", 5)
+
       if(event.target._private.data.id !== "1.") {
 
-        console.log("TARGET", event.target)
         event.target.style("border-style", "solid")
         event.target.style("border-width", 5)
 
@@ -97,14 +95,22 @@ export default function GraphUI(props) {
       }
     });
 
-    // console.log("EDGES", cy.edged().map(x => x._private.data))
   }
 
 
   
   return (
     <>
-      <h2>Titre</h2>
+      <Typography
+            component="h2"
+            id="modal-title"
+            level="h4"
+            textColor="inherit"
+            fontWeight="lg"
+            mb={1}
+      >
+        Title
+      </Typography>
       { memoGraph }
       {
         !!selectedNode &&

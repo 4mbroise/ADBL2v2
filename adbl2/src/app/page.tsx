@@ -3,9 +3,9 @@
 import Image from "next/image";
 import InboxIcon from '@mui/icons-material/Inbox';
 import MailIcon from '@mui/icons-material/Mail';
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import Sheet from '@mui/joy/Sheet';
-import { Box, Button, Container, SvgIcon, Typography, styled } from "@mui/joy";
+import { Box, Button, Container, Snackbar, SvgIcon, Typography, styled } from "@mui/joy";
 import Drawer from '@mui/joy/Drawer';
 import { kialoParser } from "../utils/kialo-parser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -17,13 +17,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import GraphUI from "./graph";
 
 
-export const AppContext = React.createContext(null);
+export const AppContext = createContext(null);
+export const SnackbarContext = createContext({})
 
 
 export default function Home() {
 
   const [open, setOpen]                     = useState(false);
   const [selectedNode, setSelectedNode]   = useState(undefined)
+
+  const [snack, setSnack] = useState({
+    message: '',
+    color: '',
+    open: false,
+  });
 
 
   // const [user, setUser] = useState(null);
@@ -134,40 +141,51 @@ export default function Home() {
   return (
 
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <AppContext.Provider value={{graph: graph, setGraph: setGraph, selectedNode: selectedNode, setSelectedNode: setSelectedNode}}>
-        <AppBar component="nav" color="transparent" elevation={0}>
-            <Toolbar>
-              <IconButton onClick={toggleDrawer(true)}>
-                <MenuIcon />
-              </IconButton>
-              <h1>
-                ADBL2
-              </h1>
-            </Toolbar>
-        </AppBar>
-        <Drawer 
-          open={open} 
-          onClose={toggleDrawer(false)}
-          slotProps={{
-            content: {
-              sx: {
-                bgcolor: 'transparent',
-                p: { md: 3, sm: 0 },
-                boxShadow: 'none',
+      <SnackbarContext.Provider value={{snack, setSnack}}>
+        <AppContext.Provider value={{graph: graph, setGraph: setGraph, selectedNode: selectedNode, setSelectedNode: setSelectedNode}}>
+          <AppBar component="nav" color="transparent" elevation={0}>
+              <Toolbar>
+                <IconButton onClick={toggleDrawer(true)}>
+                  <MenuIcon />
+                </IconButton>
+                <h1>
+                  ADBL2
+                </h1>
+              </Toolbar>
+          </AppBar>
+          <Drawer 
+            open={open} 
+            onClose={toggleDrawer(false)}
+            slotProps={{
+              content: {
+                sx: {
+                  bgcolor: 'transparent',
+                  p: { md: 3, sm: 0 },
+                  boxShadow: 'none',
+                },
               },
-            },
-          }}
-          >
-          {DrawerList}
-        </Drawer>
-        <div className="bg-slate-200 w-11/12 flex-auto flex flex-col">
-          {
-            !!graph &&
-            <GraphUI data={cytoscapeData}></GraphUI>
-            //<h2>{graph.model.toneInput.replace(".", " ?")}</h2>
-          }
-        </div>
-      </AppContext.Provider>
+            }}
+            >
+            {DrawerList}
+          </Drawer>
+          <div className="bg-slate-200 w-11/12 flex-auto flex flex-col">
+            {
+              !!graph &&
+              <GraphUI data={cytoscapeData}></GraphUI>
+              //<h2>{graph.model.toneInput.replace(".", " ?")}</h2>
+            }
+          </div>
+        </AppContext.Provider>
+      
+        <Snackbar 
+          open={snack.open} 
+          autoHideDuration={2500}
+          onClose={() => setSnack({open:false})}
+          anchorOrigin={{vertical:'top', horizontal:'center'}}
+        >
+          <p>test</p>
+        </Snackbar>
+      </SnackbarContext.Provider>
     </main>
 
 

@@ -27,8 +27,7 @@ export function kialoParser(kialoText: string) {
 
   lines = tmp
 
-  // console.log(discussionAndThesis)
-  // console.log(lines)
+
 
   const tree = new TreeModel()
   
@@ -40,7 +39,6 @@ export function kialoParser(kialoText: string) {
   
   const root = tree.parse(rootTmp)
 
-  console.log("root", root)
 
   for (let index = 0; index < lines.length; index++) {
     const id        = lines[index][0];
@@ -49,11 +47,9 @@ export function kialoParser(kialoText: string) {
 
     const parentId = id.slice(0, id.slice(0,id.length-1).lastIndexOf(".")+1)
 
-    // console.log(id, parentId)
 
     const parent = root.first(x => x.model.id === parentId)
     if ( parent !== undefined) {
-      // console.log(parent)
       
       const arg = {
         id:         id,
@@ -63,12 +59,10 @@ export function kialoParser(kialoText: string) {
    
       parent.addChild(tree.parse(arg))
     } else {
-      console.log(id, parentId)
+      console.log("")
     }
   }
 
-  // console.log(lines.length + 1 ) // +1 for the root node
-  // console.log(root.all(() => true).length)
 
   return root
 
