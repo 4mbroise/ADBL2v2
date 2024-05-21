@@ -3,9 +3,10 @@ import { useContext, useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import NorthIcon from '@mui/icons-material/North';
 import { barOptions, inferRelation, inferenceResultToDataset } from "../utils/inference";
-import { SnackbarContext } from "./page";
+import { AppContext, SnackbarContext } from "./page";
 import { Bar } from "react-chartjs-2";
 import InfoIcon from '@mui/icons-material/Info';
+import { addChild } from "../utils/kialo-parser";
 
 
 export default function AddChild(props) {
@@ -18,6 +19,9 @@ export default function AddChild(props) {
   const [confirmData, setConfirmData] = useState({ datasets: []});
 
   const { snack, setSnack } = useContext(SnackbarContext);
+  const { graph, setGraph } = useContext(AppContext)
+
+
 
   useEffect( () => {
     setchildArg("")
@@ -168,8 +172,8 @@ export default function AddChild(props) {
             >
               <Box width={"50%"} padding={1}>
                 <Select placeholder="Choose the type of relation" className="w-full" value={relationType} onChange={(e,val) => {setRelationType(val); canAdd();}} >
-                  <Option value="attack">Attack</Option>
-                  <Option value="support">Support</Option>
+                  <Option value="Con">Attack</Option>
+                  <Option value="Pro">Support</Option>
                 </Select>
               </Box> 
 
@@ -222,7 +226,7 @@ export default function AddChild(props) {
                 <Button
                   variant="outlined"
                   color="danger"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setGraph(Object.create(addChild(graph, props.arg.id, childArg, relationType)))}
                 >
                   Add it as a XXXX
                 </Button>

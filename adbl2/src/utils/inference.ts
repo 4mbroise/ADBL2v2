@@ -3,7 +3,7 @@ function sleep(ms) {
 }
 
 export async function inferRelation(relation) {
-  await sleep(3000)
+  await sleep(500)
   if(relation === "support") {
     return {support:0.6, attack:0.4}
   } else {

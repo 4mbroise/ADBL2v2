@@ -62,8 +62,41 @@ export function kialoParser(kialoText: string) {
       console.log("")
     }
   }
+  return root
+}
 
+export function addChild(root, parentId, childArgument, stance) {
+
+  const tree = new TreeModel()
+
+  const parentNode = root.first( (x) => x.model.id === parentId)
+  const nextId = getNextId(parentNode)
+
+  const newArgument: Argument = {
+    id:         nextId,
+    stance:     stance,
+    toneInput:  childArgument
+  }
+
+  parentNode.addChild(tree.parse(newArgument))
 
   return root
+}
 
+function getNextId(parentNode) {
+
+  const children = parentNode.children
+
+  let nextSubId = 1
+
+  if(children.length !== 0) {
+    nextSubId = Math.max(...children.map(x => {
+      const tmp = x.model.id.slice(0,x.model.id.length - 1).split(".")
+      return Number(tmp[tmp.length -1])
+    })) + 1
+  }
+  const nextId = parentNode.model.id + nextSubId + "."
+
+  console.log(nextId)
+  return nextId
 }

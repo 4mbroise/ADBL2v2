@@ -267,7 +267,7 @@ export default function ArgumentDetailsUI(props) {
                 }
               </Box>
             }
-            <AddChild arg={props.bottomArg}/>
+            <AddChild arg={props.bottomArg} graph={props.graph} setGraph={props.setGraph}/>
             <Grid container direction="row" >
               <Grid item xs={6} paddingRight={0.5}>
                 <Button variant="solid" startDecorator={<DeleteIcon/>} color="danger" className="w-full">

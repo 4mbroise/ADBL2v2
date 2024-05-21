@@ -1,11 +1,9 @@
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "./page";
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from "cytoscape";
 import elk from 'cytoscape-elk';
 import ArgumentDetailsUI from "./argDetails";
-import { ConstructionOutlined } from "@mui/icons-material";
-import { cp } from "fs";
 import { Typography } from "@mui/joy";
 
 cytoscape.use(elk)
@@ -23,20 +21,23 @@ export default function GraphUI(props) {
 
   const cytoscapeData: any[] = []
 
-  const memoGraph = useMemo(() => <CytoscapeComponent 
-                                    elements={props.data}
-                                    style={{height: '100%', width: '100%'}} 
-                                    className="flex-auto"
-                                    cy={(cy) => setCy(cy)}
-                                    layout= { 
-                                      {
-                                        name : 'elk',
-                                        elk: {
-                                          'elk.direction': 'UP',
-                                        }
-                                      }
-                                    }
-                                  />, [props.data]);
+  const memoGraph = useMemo(() => {
+    console.log("ICICICICICICI")
+    return <CytoscapeComponent 
+    elements={props.data}
+    style={{height: '100%', width: '100%'}} 
+    className="flex-auto"
+    cy={(cy) => setCy(cy)}
+    layout= { 
+      {
+        name : 'elk',
+        elk: {
+          'elk.direction': 'UP',
+        }
+      }
+    }
+  />
+  }, [props.data]);
 
 
 
@@ -101,6 +102,7 @@ export default function GraphUI(props) {
   
   return (
     <>
+      <h1>{props.truc}</h1>
       <Typography
             component="h2"
             id="modal-title"
@@ -114,7 +116,7 @@ export default function GraphUI(props) {
       { memoGraph }
       {
         !!selectedNode &&
-        <ArgumentDetailsUI bottomArg={selectedNode} topArg={selectedParentNode} posX={pos.x} posY={pos.y} close={setSelectedNode} key={selectedNode}/>
+        <ArgumentDetailsUI bottomArg={selectedNode} topArg={selectedParentNode} posX={pos.x} posY={pos.y} close={setSelectedNode} graph={props.graph} setGraph={props.setGraph} key={selectedNode} />
       }
       
     </>    

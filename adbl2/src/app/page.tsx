@@ -1,16 +1,12 @@
 'use client'
 
-import Image from "next/image";
-import InboxIcon from '@mui/icons-material/Inbox';
-import MailIcon from '@mui/icons-material/Mail';
-import React, { createContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import Sheet from '@mui/joy/Sheet';
-import { Box, Button, Container, Snackbar, SvgIcon, Typography, styled } from "@mui/joy";
+import { Button, Snackbar, SvgIcon, styled } from "@mui/joy";
 import Drawer from '@mui/joy/Drawer';
 import { kialoParser } from "../utils/kialo-parser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { IconButton } from '@mui/joy';
-import CloseIcon from '@mui/icons-material/Close';
 import { Close } from "@mui/icons-material";
 import { AppBar, Toolbar } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -25,6 +21,8 @@ export default function Home() {
 
   const [open, setOpen]                     = useState(false);
   const [selectedNode, setSelectedNode]   = useState(undefined)
+
+  useContext(AppContext)
 
   const [snack, setSnack] = useState({
     message: '',
@@ -41,6 +39,8 @@ export default function Home() {
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
+
+  console.log("graph", graph)
 
   const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -82,6 +82,22 @@ export default function Home() {
         cytoscapeData.push({ data : {source : child.model.id, target: node.model.id, label: child.model.id + " --> " + node.model.id}})
       });
     });
+  }
+
+  const tree2CytoscapeData = (tree) => {
+
+    console.log("machin", tree)
+
+    const tmp = []    
+
+    tree.all().forEach(node => {
+      tmp.push({data : {...node.model, label:node.model.id}})
+      node.children.forEach(child => {
+        tmp.push({ data : {source : child.model.id, target: node.model.id, label: child.model.id + " --> " + node.model.id}})
+      });
+    });
+
+    return tmp
   }
 
 
@@ -144,14 +160,14 @@ export default function Home() {
       <SnackbarContext.Provider value={{snack, setSnack}}>
         <AppContext.Provider value={{graph: graph, setGraph: setGraph, selectedNode: selectedNode, setSelectedNode: setSelectedNode}}>
           <AppBar component="nav" color="transparent" elevation={0}>
-              <Toolbar>
-                <IconButton onClick={toggleDrawer(true)}>
-                  <MenuIcon />
-                </IconButton>
-                <h1>
-                  ADBL2
-                </h1>
-              </Toolbar>
+            <Toolbar>
+              <IconButton onClick={toggleDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+              <h1>
+                ADBL2
+              </h1>
+            </Toolbar>
           </AppBar>
           <Drawer 
             open={open} 
@@ -171,7 +187,10 @@ export default function Home() {
           <div className="bg-slate-200 w-11/12 flex-auto flex flex-col">
             {
               !!graph &&
-              <GraphUI data={cytoscapeData}></GraphUI>
+              <>
+                <GraphUI data={tree2CytoscapeData(graph)} truc={Math.random()} graph={graph} setGraph={setGraph}></GraphUI>
+                {graph.children.length}
+              </>
               //<h2>{graph.model.toneInput.replace(".", " ?")}</h2>
             }
           </div>
