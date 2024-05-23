@@ -1,0 +1,27 @@
+{   
+    "gemma-2b": {
+        "display_name": "Gemma-2B",
+        "modelType": "transformers",
+        "isLocal": false,
+        "tokenizer": "google/gemma-2b",
+        "modelPath": "google/gemma-2b",
+        "promptTemplate": "ChatML"
+    },
+    "gpt2-medium": {
+        "display_name": "GPT2 medium",
+        "modelType": "transformers",
+        "isLocal": false,
+        "tokenizer": "gpt2-medium",
+        "modelPath": "gpt2-medium",
+        "promptTemplate": "ChatML"
+    },
+    "mistral-7B-instruct-v0.1-fp16": {
+        "display_name": "mistral-7B-instruct-v0.1-fp16",
+        "modelType": "llamaCpp",
+        "isLlamaCppModel": true,
+        "isLocal": true,
+        "tokenizer": "/home2/efaugier/models/Mistral-7B-Instruct-v0.1",
+        "modelPath": "/home2/efaugier/models/Mistral-7B-Instruct-v0.1/mistral-7B-instruct-v0.1-fp16.gguf",
+        "promptTemplate": "Mistral"
+    }
+}
