@@ -17,7 +17,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file ./backend/lmql-server-dockerfile --tag adbl2:$(date +%s)
     - name: login to docker Hub
-      run: docker login --username ${{ secret.USERNAME }} --password ${{ env.PASSWORD }}
+      run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     - name: push
       run: docker push 4mbroise/adbl2:$(date +%s)
 
