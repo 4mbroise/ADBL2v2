@@ -1,5 +1,6 @@
 #FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 FROM ubuntu:jammy
 
+RUN add-apt-repository --yes ppa:deadsnakes/ppa && apt-get update --yes --quiet
 RUN apt install python3.10 pip
 RUN pip install lmql[hf]
