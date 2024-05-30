@@ -1,5 +1,5 @@
-#FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
-FROM ubuntu:jammy
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+#FROM ubuntu:jammy
 
 RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-recommends \
     software-properties-common \
