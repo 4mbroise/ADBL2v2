@@ -18,3 +18,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-re
     python3.10-gdbm \
     python3.10-tk \
     pip
+
+RUN apt-get update
+
+# install release version of lmql (for dependencies)
+RUN pip install "lmql[hf]"
+
+CMD ["lmql", "serve-model","google/gemma-2b" "--port", "4000", "--cuda"]
