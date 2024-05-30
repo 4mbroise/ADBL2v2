@@ -7,6 +7,7 @@ import { AppContext, SnackbarContext } from "./page";
 import { Bar } from "react-chartjs-2";
 import InfoIcon from '@mui/icons-material/Info';
 import { addChild } from "../utils/kialo-parser";
+import { predictBinRelation } from "@/service/adbl2-api";
 
 
 export default function AddChild(props) {
@@ -17,9 +18,11 @@ export default function AddChild(props) {
 
   const [confirm, setConfirm] = useState(false);
   const [confirmData, setConfirmData] = useState({ datasets: []});
+  const [predictionResult, setPredictionResult] = useState(undefined)
 
   const { snack, setSnack } = useContext(SnackbarContext);
-  const { graph, setGraph } = useContext(AppContext)
+  const { graph, setGraph, model, promptTechnique } = useContext(AppContext)
+
 
 
 
@@ -28,16 +31,18 @@ export default function AddChild(props) {
     setRelationType(undefined)
     setConfirm(false)
     setConfirmData({ datasets: []})
-  }, [props.arg])
+    setPredictionResult(undefined)
+  }, [])
 
   const canAdd = () => {
     return childArg !== "" && !!relationType
   }
 
   const getArgColor = () => {
+    console.log("relationTyperelationTyperelationTyperelationType", relationType)
     if(relationType === undefined) {
       return "transparent"
-    } else if ( relationType === "attack"){
+    } else if ( relationType === "Con"){
       return "tomato"
     } else {
       return "lightgreen"
@@ -49,30 +54,32 @@ export default function AddChild(props) {
     console.log("snack", snack)
     // setSnack({open:true})
 
-    let tmpRelationType = "attack"
-    if(relationType === "attack") {
-      tmpRelationType = "support"
+    let tmpRelationType = "Con"
+    if(relationType === "Con") {
+      tmpRelationType = "Pro"
     }
 
-    inferRelation(tmpRelationType).then((res) => {
+    predictBinRelation(model, props.arg.toneInput, childArg, promptTechnique).then((res) => {
 
       setConfirm(true)
 
       console.log("confirmData", inferenceResultToDataset(res))
 
 
-      setConfirmData(inferenceResultToDataset(res))
-
-
-
-      setIsInfering(false)
+      let stancePrediction = "Pro"
+      if(res.attack > res.support) {
+        stancePrediction = "Con"
+      }
 
       // Cas où le type de relation ne match pas la prédiction du modèle
-      if(true) {
+      if(stancePrediction !== relationType) {
+        setConfirmData(inferenceResultToDataset(res))
+        setPredictionResult(res)
         setConfirm(true)
       } else {
-        setIsInfering(false)
+        setGraph(Object.create(addChild(graph, props.arg.id, childArg, relationType)))
         setOpen(false)   
+        setIsInfering(false)
       }
     })
   }
@@ -206,29 +213,57 @@ export default function AddChild(props) {
                 alignItems="center"
                 gap={1}
               >
-                <Typography 
-                  color="danger">
-                  Your argument has been classified as a XXX
-                </Typography>
-                <Tooltip title="Your argument may not be explicit enough to be classified as a XXX">
-                  <InfoIcon/>
-                </Tooltip>
+                {!!predictionResult &&
+                  <>
+                    {predictionResult.attack > predictionResult.support &&
+                      <>
+                        <Typography 
+                          color="danger">
+                          Your argument has been classified as an attack
+                        </Typography>
+                        <Tooltip title="Your argument may not be explicit enough to be classified as an attack">
+                          <InfoIcon/>
+                        </Tooltip> 
+                      </>
+                    }
+                    {predictionResult.attack <= predictionResult.support &&
+                      <>
+                        <Typography 
+                          color="danger">
+                          Your argument has been classified as a support
+                        </Typography>
+                        <Tooltip title="Your argument may not be explicit enough to be classified as a support">
+                          <InfoIcon/>
+                        </Tooltip> 
+                      </>
+                    }
+                  </>
+                }
               </Stack>
               <Bar options={barOptions} data={confirmData}></Bar>
               <Stack direction="row" spacing={1}>
                 <Button 
                   variant="solid" 
                   color="danger"
-                  onClick={() => setConfirm(false)}
+                  onClick={() => {setConfirm(false); setIsInfering(false)}}
                 >
                   Reformulate the argument
                 </Button>
                 <Button
                   variant="outlined"
                   color="danger"
-                  onClick={() => setGraph(Object.create(addChild(graph, props.arg.id, childArg, relationType)))}
+                  onClick={() => {setGraph(Object.create(addChild(graph, props.arg.id, childArg, relationType))); setOpen(false)}}
                 >
-                  Add it as a XXXX
+                  {!!predictionResult && predictionResult.attack > predictionResult.support &&
+                    <>
+                      Add it as a support
+                    </>
+                  }
+                  {!!predictionResult && predictionResult.attack <= predictionResult.support &&
+                    <>
+                      Add it as an attack
+                    </>
+                  }
                 </Button>
               </Stack>
             </Stack>

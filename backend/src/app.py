@@ -8,13 +8,32 @@ from typing import Optional
 import json
 from typing import Literal
 from load_model import load_model_and_tokenizer
+from fastapi.middleware.cors import CORSMiddleware
 
+
+origins = [
+    "http://192.168.237.233:27019",
+    "http://192.168.237.233:10250",
+    "http://192.168.237.233:10251",
+    "http://192.168.237.233:10252",
+    "http://192.168.237.233:10253",
+]
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+promptTechniques = ["fixed-4-shots", "0-shot"]
+
 completion = ["attack", "support"]
 
-model = lmql.model("google/gemma-2b")
+model = lmql.model("google/gemma-2b", endpoint="localhost:4000")
 
 with open("models_config.json") as json_config_file:
     modelConfigs = json.load(json_config_file)
@@ -25,15 +44,16 @@ class LlmModelEnum(Enum):
 
 class PredictionQuery(BaseModel):
     model: Literal[tuple(modelConfigs)]
-    isLlamaCppModel : bool
     topArgument : str
     subArgument : str
-    promptTechnique : Literal["fixed-4-Shots", "0-shot"]
-    modelPath: Optional[str] = None
-    @validator("modelPath", always=True)
-    def validate_date(cls, value, values):
-        if values["isLlamaCppModel"] and value is None:
-            raise ValueError('Model path missing')
+    promptTechnique : Literal[tuple(promptTechniques)]
+    # modelPath: Optional[str] = None
+    # @validator("modelPath", always=True)
+    # def validate_date(cls, value, values):
+    #     print(modelConfigs[values["model"]]["modelType"])
+    #     print(modelConfigs[values["model"]]["modelType"] == "llamaCpp" and value is None)
+    #     if modelConfigs[values["model"]]["modelType"] == "llamaCpp" and value is None:
+    #         raise ValueError('Model path missing')
 
 class PredictionResult(BaseModel):
     attack: float
@@ -57,3 +77,7 @@ async def predict():
 @app.get("/models")
 async def predict():
     return {"modelList" : list(modelConfigs)}
+
+@app.get("/prompt-techniques")
+async def predict():
+    return {"promptTechniques" : list(promptTechniques)}

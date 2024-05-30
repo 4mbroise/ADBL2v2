@@ -1,7 +1,9 @@
-FROM ghcr.io/ggerganov/llama.cpp:light-cuda--b1-917dc8c
+FROM alpine:3.20.0
 
-COPY . /app
+# COPY . /app
 
-RUN pip install -r requirements.txt
+# RUN apt-get update
+# RUN apt-get install -y python3
+# RUN pip install -r requirements.txt
 
-CMD ["python", "run", "src/app.py"] 
+# CMD ["python", "run", "src/app.py"] 

@@ -21,7 +21,8 @@ import {
 } from 'chart.js';
 import AddChild from "./addChildArgumentModal";
 import { AppContext } from "./page";
-import { inferRelation } from "../utils/inference";
+import { inferRelation, inferenceResultToDataset } from "../utils/inference";
+import { predictBinRelation } from "@/service/adbl2-api";
 
 ChartJS.register(
   CategoryScale,
@@ -38,20 +39,31 @@ export default function ArgumentDetailsUI(props) {
   const [ isAddSuccess, setIsAddSuccess ] = useState(false)
   const [ isInfering, setIsInfering ] = useState(true)
   const [ arg, setArg ] = useState(props.bottomArg.toneInput)
+  const [inferenceData, setInferenceData] = useState({ datasets: []});
+  const [inferenceResult, setInferenceResult]  = useState(undefined)
+  const { graph, setGraph, model, promptTechnique } = useContext(AppContext)
+
+
+  // useEffect(() => {
+  //   setArg(props.bottomArg.toneInput)
+  //   setIsAddSuccess(false)
+  // }, [props.bottomArg.toneInput])
 
   useEffect(() => {
+
     setArg(props.bottomArg.toneInput)
+
     setIsAddSuccess(false)
-  }, [props.bottomArg.toneInput])
-
-  useEffect(() => {
-
-    // props.topArg.toneInput
-    // props.bottomArg.toneInput
 
     setIsInfering(true)
     if(!!props.topArg){
-      inferRelation().then(() => setIsInfering(false))
+
+      predictBinRelation(model, props.topArg.toneInput, props.bottomArg.toneInput, promptTechnique).then((res) => {
+        setInferenceData(inferenceResultToDataset(res))
+        setIsInfering(false)
+      })
+
+      //inferRelation().then(() => setIsInfering(false))
     } else {
       setIsInfering(false)
     }    
@@ -65,6 +77,14 @@ export default function ArgumentDetailsUI(props) {
       props.close(undefined)
     }
   };
+
+  const infer = () => {
+    setIsInfering(true)
+    predictBinRelation(model, props.topArg.toneInput, arg, promptTechnique).then((res) => {
+      setInferenceData(inferenceResultToDataset(res))
+      setIsInfering(false)
+    })
+  }
 
   const style1 = { 
     top:props.posY,
@@ -252,10 +272,10 @@ export default function ArgumentDetailsUI(props) {
                       <Bar options={options} data={tmpData} className="absolute m-0" />
                     </Grid> */}
                     <Grid item xs={9}>
-                      <Bar options={options} data={tmpData} />
+                      <Bar options={options} data={inferenceData} />
                     </Grid>
                     <Grid item xs={3} textAlign="center">
-                      <Button onClick={function(){}}
+                      <Button onClick={() => infer()}
                         variant="plain"
                         size="lg"
                         style={{"border-radius": "99999px"}}

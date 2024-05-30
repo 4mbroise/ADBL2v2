@@ -102,7 +102,6 @@ export default function GraphUI(props) {
   
   return (
     <>
-      <h1>{props.truc}</h1>
       <Typography
             component="h2"
             id="modal-title"

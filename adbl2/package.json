@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 10250",
+    "dev": "next dev -p 27019",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.15.17",
     "@mui/joy": "^5.0.0-beta.36",
     "@mui/material": "^5.15.17",
+    "axios": "^1.7.2",
     "chart.js": "^4.4.2",
     "cytoscape": "^3.29.2",
     "cytoscape-elk": "^2.2.0",

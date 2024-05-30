@@ -1,8 +1,8 @@
 'use client'
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import Sheet from '@mui/joy/Sheet';
-import { Button, Snackbar, SvgIcon, styled } from "@mui/joy";
+import { Box, Button, Radio, Snackbar, Stack, SvgIcon, Typography, styled } from "@mui/joy";
 import Drawer from '@mui/joy/Drawer';
 import { kialoParser } from "../utils/kialo-parser";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -11,6 +11,7 @@ import { Close } from "@mui/icons-material";
 import { AppBar, Toolbar } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import GraphUI from "./graph";
+import { fetchModels } from "@/service/adbl2-api";
 
 
 export const AppContext = createContext(null);
@@ -19,8 +20,11 @@ export const SnackbarContext = createContext({})
 
 export default function Home() {
 
-  const [open, setOpen]                     = useState(false);
-  const [selectedNode, setSelectedNode]   = useState(undefined)
+  const [open, setOpen]                 = useState(false);
+  const [selectedNode, setSelectedNode] = useState(undefined)
+  const [modelList, setModelList]       = useState(undefined);
+  const [selectedModel, selectModel]    = useState(undefined);
+  const [selectedPromptTechnique, selectPromptTechnique]    = useState("0-shot");
 
   useContext(AppContext)
 
@@ -29,6 +33,14 @@ export default function Home() {
     color: '',
     open: false,
   });
+
+  useEffect(() => {
+    fetchModels().then(res => {
+      setModelList(res["modelList"])
+      selectModel(res["modelList"][0])
+
+    })
+  }, [])
 
 
   // const [user, setUser] = useState(null);
@@ -73,6 +85,9 @@ export default function Home() {
     setFile(null)
   }
 
+  const handleRadioModelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    selectModel(event.target.value);
+  };
 
   const cytoscapeData = []
   if (!!graph) {
@@ -151,6 +166,42 @@ export default function Home() {
           </Grid2>
         </Grid2>
       }
+      {!!modelList &&
+        <Stack gap={1}>
+          <Typography>
+            Select a Large Language Model
+          </Typography>
+          {modelList.map((model) => (
+              <Radio
+                checked={selectedModel === model}
+                onChange={handleRadioModelChange}
+                value={model}
+                label={model}
+                key={model}
+              />
+            ))
+          }
+        </Stack>
+      }
+      <Stack gap={1}>
+          <Typography>
+            Select a Prompt Technique
+          </Typography>
+          <Radio
+            checked={selectedPromptTechnique === "0-shot"}
+            onChange={() => selectPromptTechnique("0-shot")}
+            value="0-shot"
+            label="0-shot"
+            key="0-shot"
+          />
+          <Radio
+            checked={selectedPromptTechnique === "fixed-4-shots"}
+            onChange={() => selectPromptTechnique("fixed-4-shots")}
+            value="fixed-4-shots"
+            label="fixed-4-shots"
+            key="fixed-4-shots"
+          />
+        </Stack>
     </Sheet>
   );
 
@@ -158,7 +209,7 @@ export default function Home() {
 
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <SnackbarContext.Provider value={{snack, setSnack}}>
-        <AppContext.Provider value={{graph: graph, setGraph: setGraph, selectedNode: selectedNode, setSelectedNode: setSelectedNode}}>
+        <AppContext.Provider value={{graph: graph, setGraph: setGraph, selectedNode: selectedNode, setSelectedNode: setSelectedNode, model: selectedModel, promptTechnique: selectedPromptTechnique}}>
           <AppBar component="nav" color="transparent" elevation={0}>
             <Toolbar>
               <IconButton onClick={toggleDrawer(true)}>
@@ -188,7 +239,7 @@ export default function Home() {
             {
               !!graph &&
               <>
-                <GraphUI data={tree2CytoscapeData(graph)} truc={Math.random()} graph={graph} setGraph={setGraph}></GraphUI>
+                <GraphUI data={tree2CytoscapeData(graph)} graph={graph} setGraph={setGraph}></GraphUI>
                 {graph.children.length}
               </>
               //<h2>{graph.model.toneInput.replace(".", " ?")}</h2>
