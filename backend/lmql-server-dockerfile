@@ -30,8 +30,6 @@ COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["nvidia-smi"]
-
 EXPOSE 4000
 
 CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda"]
