@@ -26,7 +26,7 @@ RUN pip install lmql[hf]
 WORKDIR /
 RUN ls
 
-COPY entrypoint.sh /entrypoint.sh
+COPY backend/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
