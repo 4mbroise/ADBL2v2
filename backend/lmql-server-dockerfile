@@ -7,4 +7,16 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
     wget curl vim git ca-certificates kmod
 #RUN add-apt-repository --yes ppa:deadsnakes/ppa && apt-get update --yes --quiet
 RUN apt-get --yes install python3.10 pip
+RUN git clone https://github.com/ggerganov/llama.cpp
+
+# install llama.cpp and llama.cpp utilities
+WORKDIR "/llama.cpp"
+RUN make LLAMA_CUDA=1
+RUN pip install sentencepiece
+RUN CMAKE_ARGS="-DLLAMA_CUDA=on" pip install llama-cpp-python
+
 RUN pip install lmql[hf]
+
+EXPOSE 4000
+
+CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda"]
