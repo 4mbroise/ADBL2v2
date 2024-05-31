@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Delete huge unnecessary tools folder
+      run: rm -rf /opt/hostedtoolcache
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file ./backend/lmql-server-dockerfile --tag ${{ secrets.USERNAME }}/adbl2:latest
