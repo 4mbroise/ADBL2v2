@@ -15,11 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file ./backend/lmql-server-dockerfile --tag adbl2:$(date +%s)
+      run: docker build . --file ./backend/lmql-server-dockerfile --tag adbl2:latest
     - name: login to docker Hub
       run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     - name: push
-      run: docker push 4mbroise/adbl2:$(date +%s)
+      run: docker push ${{ secrets.USERNAME }}/adbl2:latest
 
 
 
