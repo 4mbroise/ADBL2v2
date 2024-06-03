@@ -11,8 +11,6 @@ services:
       - 10250:10250 
   
   frontend:
-    image: 4mbroise/adbl2:ui
-    environment: 
-      - HOST=127.0.0.1
+    image: 4mbroise/adbl2:ui-local
     ports:
       - 27019:27019
