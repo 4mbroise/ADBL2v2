@@ -46,3 +46,14 @@ jobs:
       run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     - name: push
       run: docker push ${{ secrets.USERNAME }}/adbl2:api
+
+  # build-app:
+  #   runs-on: ubuntu-latest
+  #   # needs: [build-api, build-frontend, build-lmql]
+  #   needs: [build-api]
+  #   steps:
+  #   - name: build
+  #     run: docker-compose build
+  #   - name: login to docker Hub
+  #     run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+    
