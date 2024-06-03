@@ -5,7 +5,10 @@ COPY backend/ backend/
 WORKDIR backend
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+
+RUN pip install lmql fastapi
+
+#RUN pip install -r requirements.txt
 #RUN source bin/activate
 
 EXPOSE 10250
