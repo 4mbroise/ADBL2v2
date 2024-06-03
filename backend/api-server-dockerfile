@@ -13,4 +13,4 @@ RUN pip install lmql fastapi
 
 EXPOSE 10250
 
-CMD ["fastapi", "run","app.py", "--port", "10250", "--host" "0.0.0.0"]
+CMD fastapi run app.py --port 10250 --host 0.0.0.0
