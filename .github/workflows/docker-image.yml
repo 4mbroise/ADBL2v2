@@ -8,6 +8,21 @@ on:
 
 jobs:
 
+  # build:
+
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - name: Delete huge unnecessary tools folder
+  #     run: rm -rf /opt/hostedtoolcache
+  #   - uses: actions/checkout@v4
+  #   - name: Build the Docker image
+  #     run: docker build . --file ./backend/lmql-server-dockerfile --tag ${{ secrets.USERNAME }}/adbl2:latest
+  #   - name: login to docker Hub
+  #     run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+  #   - name: push
+  #     run: docker push ${{ secrets.USERNAME }}/adbl2:latest
+
   build:
 
     runs-on: ubuntu-latest
@@ -17,36 +32,8 @@ jobs:
       run: rm -rf /opt/hostedtoolcache
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file ./backend/lmql-server-dockerfile --tag ${{ secrets.USERNAME }}/adbl2:latest
+      run: docker build . --file ./adbl2/dockerfile --tag ${{ secrets.USERNAME }}/adbl2:ui
     - name: login to docker Hub
       run: docker login --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     - name: push
-      run: docker push ${{ secrets.USERNAME }}/adbl2:latest
-
-
-
-# jobs:
-#   build-and-push-image:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
-#       packages: write
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v2
-
-#       - name: Log in to the Container registry
-#         uses: docker/login-action@v1
-#         with:
-#           registry: ${{ env.REGISTRY }}
-#           username: ${{ github.actor }}
-#           password: ${{ secrets.GITHUB_TOKEN }}
-
-#       - name: Build and push Docker image
-#         uses: docker/build-push-action@v2
-#         with:
-#           context: ./expresso
-#           push: true
-#           file: ./expresso/Dockerfile.multistage
-#           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      run: docker push ${{ secrets.USERNAME }}/adbl2:ui
