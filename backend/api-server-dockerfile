@@ -2,7 +2,7 @@ FROM python:3.10.14-alpine
 
 COPY backend/ backend/
 
-WORKDIR backend
+WORKDIR backend/src
 
 RUN pip install --upgrade pip
 
