@@ -4,8 +4,8 @@ COPY backend/ backend/
 
 WORKDIR backend
 
-#RUN pip install -r requirements.txt
-RUN source bin/activate
+RUN pip install -r requirements.txt
+#RUN source bin/activate
 
 EXPOSE 10250
 
