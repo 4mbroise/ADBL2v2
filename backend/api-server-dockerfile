@@ -8,8 +8,8 @@ RUN apk add alpine-sdk
 RUN pip install --upgrade pip
 RUN pip install lmql fastapi transformers sentencepiece
 
-#RUN pip install -r requirements.txt
-#RUN source bin/activate
+COPY backend/entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 10250
 
