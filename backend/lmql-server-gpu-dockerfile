@@ -9,6 +9,12 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
     wget curl vim git ca-certificates kmod \
  && rm -rf /var/lib/apt/lists/*
 
+RUN apt remove --purge *nvidia*
+RUN apt remove --purge* cuda*
+RUN apt autoremove -y
+RUN wget https://developer.download.nvidia.com/compute/cuda/12.5.0/local_installers/cuda_12.5.0_555.42.02_linux.run
+RUN sh cuda_12.5.0_555.42.02_linux.run
+
 RUN git clone https://github.com/ggerganov/llama.cpp
 WORKDIR "/llama.cpp"
 RUN make LLAMA_CUDA=1
@@ -20,13 +26,6 @@ RUN pip install lmql[hf]
 WORKDIR /
 COPY backend/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-
-RUN apt remove --purge *nvidia*
-RUN apt remove --purge* cuda*
-RUN apt autoremove -y
-RUN wget https://developer.download.nvidia.com/compute/cuda/12.5.0/local_installers/cuda_12.5.0_555.42.02_linux.run
-RUN sh cuda_12.5.0_555.42.02_linux.run
-
 
 EXPOSE 4000
 CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda", "--host", "0.0.0.0"]
