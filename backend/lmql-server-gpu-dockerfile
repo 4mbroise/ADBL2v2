@@ -29,4 +29,4 @@ RUN sh cuda_12.5.0_555.42.02_linux.run
 
 
 EXPOSE 4000
-CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda"]
+CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda", "--host", "0.0.0.0"]
