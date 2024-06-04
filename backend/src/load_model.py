@@ -28,4 +28,4 @@ def load_model_and_tokenizer(modelConfig):
     # if modelConfig["isLocal"]:
     #     modelName = "local:" + modelName
 
-    return lmql.model(modelName, tokenizer=modelConfig["tokenizer"], endpoint="localhost:4000")
+    return lmql.model(modelName, tokenizer=modelConfig["tokenizer"], endpoint="0.0.0.0:4000")
