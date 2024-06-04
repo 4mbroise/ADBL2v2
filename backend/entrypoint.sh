@@ -15,6 +15,4 @@ huggingface-cli login --token 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
 # sh cuda_12.5.0_555.42.02_linux.run
 
 
-nvidia-smi
-
 exec "$@"
