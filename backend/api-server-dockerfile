@@ -4,6 +4,7 @@ COPY backend/ backend/
 
 WORKDIR backend/src
 
+RUN apk add cmake
 RUN apk add alpine-sdk
 RUN pip install --upgrade pip
 RUN pip install lmql fastapi transformers sentencepiece
