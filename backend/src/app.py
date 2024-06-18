@@ -74,7 +74,7 @@ async def predict(body: PredictionQuery) -> PredictionResult :
 
 @app.get("/ping")
 async def ping():
-    return {"ping": requests.get("http://localhost:7000/ping")}
+    return requests.get("http://localhost:7000/ping").text
 
 @app.get("/model")
 async def predict():
