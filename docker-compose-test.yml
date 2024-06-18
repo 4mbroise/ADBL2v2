@@ -1,0 +1,26 @@
+version: "1"
+services:
+  ping:
+    image: briceburg/ping-pong:latest
+    ports:
+      - 7000:80
+    environment:
+      - http_proxy=http://proxy.univ-lyon1.fr:3128
+      - https_proxy=http://proxy.univ-lyon1.fr:3128
+  
+  api:
+    image: 4mbroise/adbl2:api
+    ports:
+      - 10250:10250 
+    environment:
+      - http_proxy=http://proxy.univ-lyon1.fr:3128
+      - https_proxy=http://proxy.univ-lyon1.fr:3128
+  
+  frontend:
+    image: 4mbroise/adbl2:ui-local
+    ports:
+      - 27019:27019
+    environment:
+      - http_proxy=http://proxy.univ-lyon1.fr:3128
+      - https_proxy=http://proxy.univ-lyon1.fr:3128
+  

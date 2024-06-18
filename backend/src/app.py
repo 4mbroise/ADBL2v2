@@ -9,6 +9,7 @@ import json
 from typing import Literal
 from load_model import load_model_and_tokenizer
 from fastapi.middleware.cors import CORSMiddleware
+import requests
 
 
 origins = [
@@ -70,6 +71,10 @@ async def predict(body: PredictionQuery) -> PredictionResult :
     
     res = await relationsClf(model, body.topArgument, body.subArgument, body.promptTechnique, modelConfig["promptTemplate"])
     return res
+
+@app.get("/ping")
+async def predict():
+    return requests.get("http://localhost:7000/ping")
 
 @app.get("/model")
 async def predict():
