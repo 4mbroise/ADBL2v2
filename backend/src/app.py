@@ -35,7 +35,7 @@ promptTechniques = ["fixed-4-shots", "0-shot"]
 
 completion = ["attack", "support"]
 
-model = lmql.model("google/gemma-2b", endpoint="localhost:4000")
+model = lmql.model("google/gemma-2b", endpoint="lmql:4000")
 
 with open("models_config.json") as json_config_file:
     modelConfigs = json.load(json_config_file)
