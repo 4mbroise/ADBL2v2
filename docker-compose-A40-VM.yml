@@ -2,7 +2,6 @@ version: "1"
 services:
   lmql:
     image: 4mbroise/adbl2:lmql-gpu
-    network_mode: host
     ports:
       - 4000:4000
     environment:
@@ -18,7 +17,6 @@ services:
   
   api:
     image: 4mbroise/adbl2:api
-    network_mode: host
     ports:
       - 10250:10250 
     environment:
@@ -27,7 +25,6 @@ services:
   
   frontend:
     image: 4mbroise/adbl2:ui
-    network_mode: host    
     ports:
       - 27019:27019
     environment:

@@ -2,13 +2,11 @@ version: "1"
 services:
   lmql:
     image: 4mbroise/adbl2:lmql-cpu
-    network_mode: bridge
     ports:
       - 4000:4000
   
   api:
     image: 4mbroise/adbl2:api
-    network_mode: bridge
     ports:
       - 10250:10250 
   
