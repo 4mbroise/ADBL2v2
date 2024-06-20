@@ -23,5 +23,13 @@
         "tokenizer": "/home2/efaugier/models/Mistral-7B-Instruct-v0.1",
         "modelPath": "/home2/efaugier/models/Mistral-7B-Instruct-v0.1/mistral-7B-instruct-v0.1-fp16.gguf",
         "promptTemplate": "Mistral"
+    },
+    "ADBL2_Mistral-7b-fine-tuned": {
+        "display_name": "ADBL2 Mistral 7B fine tuned",
+        "modelType": "transformers",
+        "isLocal": false,
+        "tokenizer": "4mbroise/ADBL2-Mistral-7B",
+        "modelPath": "4mbroise/ADBL2-Mistral-7B",
+        "promptTemplate": "Mistral"
     }
 }
