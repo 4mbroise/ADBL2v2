@@ -27,7 +27,7 @@
     "ADBL2_Mistral-7b-fine-tuned": {
         "display_name": "ADBL2 Mistral 7B fine tuned",
         "modelType": "transformers",
-        "isLocal": false,
+        "isLocal": true,
         "tokenizer": "4mbroise/ADBL2-Mistral-7B",
         "modelPath": "4mbroise/ADBL2-Mistral-7B",
         "promptTemplate": "Mistral"

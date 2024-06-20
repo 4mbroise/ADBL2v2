@@ -16,6 +16,8 @@ RUN pip install sentencepiece --no-cache-dir
 RUN CMAKE_ARGS="-DLLAMA_CUDA=on" pip install llama-cpp-python --no-cache-dir 
 
 RUN pip install lmql[hf]
+RUN pip install peft
+
 
 WORKDIR /
 COPY backend/entrypoint.sh /entrypoint.sh
