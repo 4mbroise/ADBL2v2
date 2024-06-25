@@ -20,8 +20,8 @@ RUN pip install peft
 
 WORKDIR /
 
-COPY backend/downloadLocalModels.py /downloadLocalModels.py
-COPY backend/models_config.json /models_config.json
+COPY backend/src/downloadLocalModels.py /downloadLocalModels.py
+COPY backend/src/models_config.json /models_config.json
 
 RUN mkdir models
 RUN python3 downloadLocalModels.py
