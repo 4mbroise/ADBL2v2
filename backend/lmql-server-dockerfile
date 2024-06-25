@@ -25,10 +25,14 @@ RUN pip install lmql[hf]
 RUN pip install peft
 
 WORKDIR /
-RUN ls
+
+COPY backend/downloadLocalModels.py /downloadLocalModels.py
+COPY backend/models_config.json /models_config.json
+
+RUN mkdir models
+RUN python3 downloadLocalModels.py
 
 COPY backend/entrypoint.sh /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 4000
