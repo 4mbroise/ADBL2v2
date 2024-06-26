@@ -31,4 +31,4 @@ COPY backend/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 4000
-CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda", "--host", "0.0.0.0"]
+CMD ["lmql", "serve-model", "--port", "4000", "--cuda", "--host", "0.0.0.0"]

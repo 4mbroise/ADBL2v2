@@ -37,4 +37,4 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 4000
 
-CMD ["lmql", "serve-model", "google/gemma-2b", "--port", "4000", "--cuda"]
+CMD ["lmql", "serve-model", "--port", "4000", "--cuda"]
